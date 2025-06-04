@@ -1,0 +1,311 @@
+Virtual DOM
+===========
+
+The Virtual DOM is a JavaScript object that represents a structure of the real DOM. It is essentially a lightweight copy (or "mirror") of the actual DOM, 
+but it is not rendered on the screen.
+
+How the Virtual DOM Works
+==========================
+
+When a component is rendered for the first time, a Virtual DOM is created. Whenever the component’s state or props change, a new Virtual DOM is generated.
+
+This new Virtual DOM is then compared to the previous one in a process called "diffing". If differences are found, the necessary changes are calculated, and only those specific parts of the real DOM are updated — rather than re-rendering the entire DOM.
+
+What is JSX?
+============
+
+JSX stands for JavaScript XML. It allows us to write HTML inside JavaScript and place them in the DOM without using functions like appendChild( ) or createElement( ).
+
+As stated in the official docs of React, JSX provides syntactic sugar for React.createElement( ) function.
+
+Note- We can create react applications without using JSX as well.
+
+Let’s understand how JSX works:
+
+Without using JSX, we would have to create an element by the following process:
+
+const text = React.createElement('p', {}, 'This is a text');
+const container = React.createElement('div','{}',text );
+ReactDOM.render(container,rootElement);
+Using JSX, the above code can be simplified:
+
+const container = (
+<div>
+  <p>This is a text</p>
+</div>
+);
+ReactDOM.render(container,rootElement);
+As one can see in the code above, we are directly using HTML inside JavaScript.
+
+
+How to create components in React?
+==================================
+
+Components are the building blocks of creating User Interfaces(UI) in React. There are two possible ways to create a component.
+
+Function Components: This is the simplest way to create a component. Those are pure JavaScript functions that accept props object as the one and only one parameter and return React elements to render the output:
+
+function Greeting({ message }) {
+  return <h1>{`Hello, ${message}`}</h1>;
+}
+Class Components: You can also use ES6 class to define a component. The above function component can be written as a class component:
+
+class Greeting extends React.Component {
+  render() {
+    return <h1>{`Hello, ${this.props.message}`}</h1>;
+  }
+}
+
+
+When to use a Class Component over a Function Component?
+========================================================
+
+After the addition of Hooks(i.e. React 16.8 onwards) it is always recommended to use Function components over Class components in React. Because you could use state, lifecycle methods and other features that were only available in class component present in function component too.
+
+But even there are two reasons to use Class components over Function components.
+
+If you need a React functionality whose Function component equivalent is not present yet, like Error Boundaries.
+In older versions, If the component needs state or lifecycle methods then you need to use class component.
+So the summary to this question is as follows:
+
+Use Function Components:
+
+If you don't need state or lifecycle methods, and your component is purely presentational.
+For simplicity, readability, and modern code practices, especially with the use of React Hooks for state and side effects.
+Use Class Components:
+
+If you need to manage state or use lifecycle methods.
+In scenarios where backward compatibility or integration with older code is necessary.
+
+
+What are Pure Components?
+=========================
+
+Pure components are the components which render the same output for the same state and props. In function components, you can achieve these pure components through memoized React.memo() API wrapping around the component. This API prevents unnecessary re-renders by comparing the previous props and new props using shallow comparison. So it will be helpful for performance optimizations.
+
+But at the same time, it won't compare the previous state with the current state because function component itself prevents the unnecessary rendering by default when you set the same state again.
+
+What is state in React?
+=======================
+
+State of a component is an object that holds some information that may change over the lifetime of the component. The important point is whenever the state object changes, the component re-renders. It is always recommended to make our state as simple as possible and minimize the number of stateful components.
+
+
+What are props in React?
+===========================
+
+
+Props are inputs to components. They are single values or objects containing a set of values that are passed to components on creation similar to HTML-tag attributes. Here, the data is passed down from a parent component to a child component.
+
+The primary purpose of props in React is to provide following component functionality:
+
+Pass custom data to your component.
+Trigger state changes.
+Use via this.props.reactProp inside component's render() method.
+
+
+What is the difference between state and props?
+===============================================
+
+In React, both state and props are plain JavaScript objects, but they serve different purposes and have distinct behaviors:
+
+State
+--------
+
+Definition:-
+State is a data structure that is managed within a component. It represents information that can change over the lifetime of the component.
+
+Mutability:-
+State is mutable, meaning it can be changed using the setter function (setState in class components or the updater function from useState in functional components).
+
+Scope:-
+State is local to the component where it is defined. Only that component can modify its own state.
+
+Usage:-
+State is typically used for data that needs to change in response to user actions, network responses, or other dynamic events.
+
+Re-rendering:-
+Updating the state triggers a re-render of the component and its descendants.
+
+Props
+------
+
+Definition:-
+Props (short for “properties”) are inputs to a component, provided by its parent component.
+
+Mutability:-
+Props are read-only. A component cannot modify its own props; they are immutable from the component’s perspective.
+
+Scope:-
+Props are used to pass data and event handlers down the component tree, enabling parent components to configure or communicate with their children.
+
+Usage:-
+Props are commonly used to make components reusable and configurable. They allow the same component to be rendered with different data or behavior.
+
+Analogy:-
+Think of props as arguments to a function, whereas state is like variables declared inside the function.
+
+
+
+What are synthetic events in React?
+===================================
+
+SyntheticEvent is a cross-browser wrapper around the browser's native event. Its API is same as the browser's native event, including stopPropagation() and preventDefault(), except the events work identically across all browsers. The native events can be accessed directly from synthetic events using nativeEvent attribute.
+
+
+What is "key" prop and what is the benefit of using it in arrays of elements?
+===============================================================================
+
+A key is a special attribute you should include when mapping over arrays to render data. Key prop helps React identify which items have changed, are added, or are removed.
+
+Keys should be unique among its siblings. Most often we use ID from our data as key:
+
+const todoItems = todos.map((todo) => <li key={todo.id}>{todo.text}</li>);
+When you don't have stable IDs for rendered items, you may use the item index as a key as a last resort:
+
+const todoItems = todos.map((todo, index) => (
+  <li key={index}>{todo.text}</li>
+));
+
+Note:-
+
+Using indexes for keys is not recommended if the order of items may change. This can negatively impact performance and may cause issues with component state.
+If you extract list item as separate component then apply keys on list component instead of li tag.
+There will be a warning message in the console if the key prop is not present on list items.
+The key attribute accepts either string or number and internally convert it as string type.
+Don't generate the key on the fly something like key={Math.random()}. Because the keys will never match up between re-renders and DOM created everytime.
+
+
+What are controlled and uncontrolled components?
+================================================
+
+A component that controls the input elements within the forms on subsequent user input is called Controlled Component, i.e, every state mutation will have an associated handler function. That means, the displayed data is always in sync with the state of the component.
+
+The Uncontrolled Components are the ones that store their own state internally, and you query the DOM using a ref to find its current value when you need it. This is a bit more like traditional HTML.
+
+What is Lifting State Up in React?
+==================================
+
+When several components need to share the same changing data then it is recommended to lift the shared state up to their closest common ancestor. That means if two child components share the same data from its parent, then move the state to parent instead of maintaining local state in both of the child components.
+
+What are Higher-Order Components?
+==================================
+
+A higher-order component (HOC) is a function that takes a component and returns a new component. Basically, it's a pattern that is derived from React's compositional nature.
+
+We call them pure components because they can accept any dynamically provided child component but they won't modify or copy any behavior from their input components.
+
+const EnhancedComponent = higherOrderComponent(WrappedComponent);
+HOC can be used for many use cases:
+
+Code reuse, logic and bootstrap abstraction.
+Render hijacking.
+State abstraction and manipulation.
+Props manipulation.
+
+
+What is children prop?
+=======================
+
+Children is a prop that allows you to pass components as data to other components, just like any other prop you use. Component tree put between component's opening and closing tag will be passed to that component as children prop.
+
+A simple usage of children prop looks as below,
+
+function MyDiv({ children }){
+    return (
+      <div>
+        {children}
+      </div>;
+    );
+}
+
+export default function Greeting() {
+  return (
+    <MyDiv>
+      <span>{"Hello"}</span>
+      <span>{"World"}</span>
+    </MyDiv>
+  );
+}
+
+
+What are fragments?
+====================
+
+It's a common pattern or practice in React for a component to return multiple elements. Fragments let you group a list of children without adding extra nodes to the DOM. You need to use either <Fragment> or a shorter syntax having empty tag (<></>).
+
+What are stateless components?
+==============================
+
+If the behaviour of a component is independent of its state then it can be a stateless component. You can use either a function or a class for creating stateless components. But unless you need to use a lifecycle hook in your components, you should go for function components. There are a lot of benefits if you decide to use function components here; they are easy to write, understand, and test, a little faster, and you can avoid the this keyword altogether.
+
+What are stateful components?
+=============================
+
+If the behaviour of a component is dependent on the state of the component then it can be termed as stateful component. These stateful components are either function components with hooks or class components.
+
+What are the limitations of React?
+==================================
+
+Apart from the advantages, there are few limitations of React too,
+
+React is just a view library, not a full framework.
+There is a learning curve for beginners who are new to web development.
+Integrating React into a traditional MVC framework requires some additional configuration.
+The code complexity increases with inline templating and JSX.
+Too many smaller components leading to over engineering or boilerplate.
+
+How do you conditionally render components?
+=============================================
+
+In some cases you want to render different components depending on some state. JSX does not render false or undefined, so you can use conditional short-circuiting to render a given part of your component only if a certain condition is true.
+
+const MyComponent = ({ name, address }) => (
+  <div>
+    <h2>{name}</h2>
+    {address && <p>{address}</p>}
+  </div>
+);
+If you need an if-else condition then use ternary operator.
+
+const MyComponent = ({ name, address }) => (
+  <div>
+    <h2>{name}</h2>
+    {address ? <p>{address}</p> : <p>{"Address is not available"}</p>}
+  </div>
+);
+
+
+How do you memoize a component?
+====================================
+
+There are memoize libraries available which can be used on function components.
+
+For example moize library can memoize the component in another component.
+
+import moize from "moize";
+import Component from "./components/Component"; // this module exports a non-memoized component
+
+const MemoizedFoo = moize.react(Component);
+
+const Consumer = () => {
+  <div>
+    {"I will memoize the following entry:"}
+    <MemoizedFoo />
+  </div>;
+};
+Update: Since React v16.6.0, we have a React.memo. It provides a higher order component which memoizes component unless the props change. To use it, simply wrap the component using React.memo before you use it.
+
+const MemoComponent = React.memo(function MemoComponent(props) {
+  /* render using props */
+});
+OR;
+export default React.memo(MyFunctionComponent);
+
+
+What is React Router?
+=====================
+
+React Router is a powerful routing library built on top of React that helps you add new screens and flows to your application incredibly quickly, all while keeping the URL in sync with what's being displayed on the page.
+
+
