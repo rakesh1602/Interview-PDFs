@@ -1,0 +1,248 @@
+React Hooks
+============>
+
+A React Hook is a special function provided by the React library that allows developers to use state and other React features in functional components. without write a class.
+
+useState() :
+-----------
+
+hook is a function which is used to store state value in a functional component. It accepts an argument as the initial value of the state. 
+It returns an array with 2 elements. First element is the current value of state. 
+Second element is a function to update the state.
+Basically, with the help of useState() method, we can change, update or manipulate the values without refreshing the project.
+
+useReducer() :
+--------------
+
+The useReducer hook allows you to manage the state in a functional component, 
+and it also provides a function that updates the state and re-renders the component.
+
+The useReducer Hook takes two arguments: a reducer function and an initial state. 
+The reducer function specifies how the state should be updated based on the type of action dispatched. 
+It receives the current state and an action object as arguments, and it returns the new state.
+
+The reducer function is responsible for specifying how the state should be updated based on the action type
+The dispatch function is used to send actions to the reducer,
+
+useEffect() :
+--------------
+
+The useEffect hook allows developers to perform side effects in a functional component.
+
+A side effect means any work that is outside of simply calculating and returning the UI (output) based on props and state.
+Examples of side effects include fetching data, setting a timer, or changing the page title — tasks that don't directly affect the return value of the component.
+
+The useEffect hook accepts two arguments:
+A callback function (required) — where you write the side-effect code.
+A dependencies array (optional) — to control when the effect should run.
+useEffect runs after the first render (when the component mounts).
+If you do not provide a dependency array, the effect will run after every render.
+If you want useEffect to run only when specific state(s) or prop(s) change, you must pass them inside the dependency array.
+
+
+In a functional React component, the main job is to calculate and return the UI (output) based on props and state.
+But if the component does something extra that doesn't directly affect the returned UI — like fetching data, setting a timer, or changing the page title — that extra work is called a side-effect.
+
+useRef() :
+-----------
+
+useRef is a built-in React hook that lets you store a value that persists between re-renders of a component. It doesn't cause the component to re-render when the value is changed.
+
+How it works:
+When you call useRef(initialValue), React returns an object with a current property. This current property holds the value you provide as the initialValue.
+
+What happens when you don't pass an initial value?
+If you don't provide an initial value to useRef, the current property will start as undefined.
+
+ex.  
+
+import React, { useState, useRef } from 'react';
+
+function Counter() {
+  const [count, setCount] = useState(0);
+  const previousCountRef = useRef();
+
+  // Update the previous count on each render
+  useEffect(() => {
+    previousCountRef.current = count;
+  }, [count]);
+
+  return (
+    <div>
+      <h1>Current Count: {count}</h1>
+      <h2>Previous Count: {previousCountRef.current}</h2>
+      <button onClick={() => setCount(count + 1)}>Increment</button>
+    </div>
+  );
+}
+
+export default Counter;
+
+How this works:
+useRef() is used to store the previous count (previousCountRef) across renders.
+The previousCountRef.current will not trigger a re-render when the value changes, but you can still access and update it.
+Each time the count changes, previousCountRef.current will be updated, and it will display the previous count when the button is clicked.
+
+ex.
+
+import React, { useRef, useEffect } from 'react';
+
+function AutoFocusInput() {
+  // Create a ref for the input element
+  const inputRef = useRef(null);
+
+  // Focus the input element when the component is mounted
+  useEffect(() => {
+    inputRef.current.focus();  // Focus the input field automatically
+  }, []);
+
+  return (
+    <div>
+      <input ref={inputRef} type="text" placeholder="Focus on me!" />
+    </div>
+  );
+}
+
+export default AutoFocusInput;
+
+How this works:
+useRef(null) creates a reference to the input element.
+inputRef.current will point to the actual DOM element after the component mounts.
+inputRef.current.focus() is used inside useEffect to automatically focus the input when the component first renders.
+
+
+ is <h2>Previous: {prevCountRef.current}</h2>  not rerender the compoent
+
+Yes, you are correct in thinking that prevCountRef.current will not trigger a re-render of the component. Let me explain why:
+
+How useRef works:
+When you update the current property of the useRef object (like prevCountRef.current), React does not trigger a re-render of the component.
+This is the key difference between useState and useRef:
+useState triggers a re-render whenever the state is updated.
+useRef allows you to store a mutable value that does not cause a re-render when updated.
+
+State (count) changes:
+When you click the "Increment" button, setCount updates the state, which causes the component to re-render. During the re-render, prevCountRef.current does not trigger the re-render, but the state count is updated and displayed.
+
+Updating prevCountRef.current:
+Inside the useEffect, each time count changes, the value of prevCountRef.current is updated with the latest count value without causing a re-render.
+
+Displaying prevCountRef.current:
+Even though prevCountRef.current is updated each time the component re-renders, it will display the previous value because prevCountRef.current holds the value from the last render. But since it’s not state, it doesn’t trigger a re-render when updated, which means it won’t cause the component to re-render on its own.
+
+Why prevCountRef.current doesn’t trigger a re-render:
+useRef is used to persist values between renders, but those values don't directly impact the UI unless explicitly rendered. Since prevCountRef.current isn't part of the state or props, updating it doesn’t trigger a re-render.
+
+
+then what is deference between useState and useRef 
+
+
+differences between useState and useRef in React:
+==================================================
+
+1. Re-rendering the Component
+useState:
+When the state value changes, React re-renders the component. This is useful when you want to update the UI based on state changes.
+
+useRef:
+Updating the current property of a useRef object does not trigger a re-render. It is useful for storing values that you want to persist across renders, but don't need to directly affect the UI.
+
+2. Purpose
+useState:
+It is used to store values that will directly affect the rendered output (UI). You should use useState when the value you store is part of the UI or needs to cause a component re-render when it changes.
+
+useRef:
+It is used to persist values between renders without causing re-renders. It’s often used to reference DOM elements (for instance, focusing an input), or to store values like a timer or previous state without re-rendering the component.
+
+3. Return Value
+useState:
+useState returns an array with two elements:
+
+The current state value.
+
+A function to update the state.
+
+Example:
+
+const [count, setCount] = useState(0);
+
+useRef:
+useRef returns an object with a single property: current. The current property can hold any value and persists between renders without causing a re-render.
+
+Example:
+const inputRef = useRef();
+
+4. Mutability
+useState:
+The value of the state is immutable. To change it, you must use the set function provided by useState. This ensures React keeps track of the state and triggers a re-render.
+
+useRef:
+The value stored in useRef is mutable. You can directly modify the current property without needing a setter function, and it will persist the value between renders.
+
+5. Usage
+useState:
+Use useState for values that affect the component's rendering or when you need to re-render the component when the value changes (e.g., form input values, counts, etc.).
+
+useRef:
+Use useRef when you need to reference a DOM element, or store values like timers, previous state values, or any mutable data that should persist across renders without triggering re-renders.
+
+
+useMemo() :
+
+useMemo is a React Hook that is used for performance optimization by memoizing the result of a computationally expensive function. Memoization is the process of caching the result of a function based on its arguments, so that if the function is called again with the same arguments, the cached result is returned instead of recomputing the result.
+
+The useMemo Hook takes two arguments: a function that returns the memoized value, and an array of dependencies. The function is only re-executed when one of the dependencies changes. If the dependencies are the same between renders, the previously memoized value is returned
+
+
+https://blog.saeloun.com/2022/09/22/difference-between-useCallback-and-useMemo-hooks/
+https://www.geekster.in/articles/component/
+
+
+
+Life Cycle Method
+==================
+
+We can divide the lifecycle methods of the component into three categories.
+---------------------------------------------------------------------------
+
+Mounting: This includes the beginning phase of the component. 
+
+The first constructor of the component gets invoked. Constructor receives props as an argument from the parent component. 
+Constructor is the place where we define an initial state of a component. 
+
+After constructor and before render, lifecycle method getDrivedStateFromProps is invoked, it returns the state object or null to avoid the render. 
+Its purpose is to allow a component to update its internal state based on changes in props. 
+The method should either return an object that will be merged into the component's state, or null if no state update is necessary.
+
+Then Render method is invoked which renders the JSX. Then at the end, componentDidMount is invoked.
+
+Updating: A component gets an update via a change in state or change in props. 
+In both of these cases, the getDrivedStateFromProps method is invoked first where we get props and state as an argument and returns updated state. 
+Then shouldComponentUpdate methods are invoked. If this method returns true then the only component gets the update otherwise component update is aborted. 
+Then render method is called and after this getSnapshotBeforeUpdate is called. In the end, the componentDidUpdate method is called
+
+Unmounting: componentWillUnmount lifecycle method is invoked before the unmounting of the component takes place.
+
+
+EXPLAIN THE CONCEPT OF A PURE COMPONENT IN REACT.
+=================================================
+
+A “pure component” in React is a component that updates only when its properties or state have changed. 
+In contrast, a “non-pure component” re-renders each time the parent component re-renders, regardless of whether its props or state have changed. 
+Pure components are more productive since they do not needlessly re-render. By extending React, a component in React can be made pure. 
+React is substituted by PureComponent. Component. This prompts the shouldComponentUpdate method, which decides whether or not to re-render, 
+to provide an automatic shallow comparison of the component’s props and state.
+
+WHAT IS THE DIFFERENCE BETWEEN A FUNCTIONAL COMPONENT AND A CLASS COMPONENT IN REACT?
+=========================================================================================
+
+In React, a functional component is a plain JavaScript function that takes in props and returns a React element. 
+A class component is a JavaScript class that extends React.Component and has a render method that returns a React element.
+
+One key difference between the two is that a class component can have local state and lifecycle methods, while a functional component cannot. 
+However, starting with React 16.8, functional components can also have a state using hooks.
+
+Functional components are considered simpler, easier to understand and test, and have better performance than class components. 
+Class components are useful when you need to use lifecycle methods or the local state.
+
+
